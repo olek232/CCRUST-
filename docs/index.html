@@ -84,15 +84,19 @@
 
         const reactionTime = Date.now() - startTime;
         alert(`Your time: ${reactionTime}ms`);
-        try {
-          await addDoc(collection(db, "wyniki"), {
-            wallet,
-            reactionTime,
-            timestamp: new Date().toISOString()
-          });
-        } catch (err) {
-          console.error("Firebase error:", err);
+
+        if (reactionTime < 200) {
+          try {
+            await addDoc(collection(db, "wyniki"), {
+              wallet,
+              reactionTime,
+              timestamp: new Date().toISOString()
+            });
+          } catch (err) {
+            console.error("Firebase error:", err);
+          }
         }
+
         location.reload();
       };
 
@@ -181,13 +185,14 @@
       padding: 8px;
       border-radius: 6px;
     }
-    #adBannerContainer {
-      position: fixed;
+    #adBannerInside {
+      position: absolute;
       bottom: 20px;
-      right: 20px;
+      left: 50%;
+      transform: translateX(-50%);
       width: 300px;
       height: 250px;
-      z-index: 1000;
+      z-index: 1001;
     }
   </style>
 </head>
@@ -205,10 +210,11 @@
     <button id="backBtn">⬅️ Back to game</button>
   </div>
 
-  <div id="overlay"></div>
+  <div id="overlay">
+    <div id="adBannerInside"></div>
+  </div>
 
-  <!-- 📦 Baner reklamowy Adsterra -->
-  <div id="adBannerContainer"></div>
+  <!-- Adsterra banner script -->
   <script type="text/javascript">
     atOptions = {
       'key' : 'ddcd93e7f9d554d3017b67f3f79cb8fd',
