@@ -1,170 +1,210 @@
 <!DOCTYPE html>
-<html lang="pl">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>CCRUST Arena</title>
+  <meta charset="UTF-8" />
+  <title>CCRUST Speed Test</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Firebase SDK (ESM modules) -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-app.js";
+    import { getFirestore, collection, addDoc, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDmakxhD7bNdeZX69r7wcC8sNzy0uuWpwY",
+      authDomain: "ccrustst.firebaseapp.com",
+      projectId: "ccrustst"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    window.addEventListener("DOMContentLoaded", () => {
+      const walletInput = document.getElementById("wallet");
+      const startBtn = document.getElementById("startBtn");
+      const countdown = document.getElementById("countdown");
+      const message = document.getElementById("message");
+      const overlay = document.getElementById("overlay");
+      const title = document.getElementById("title");
+      const leaderBtn = document.getElementById("leaderBtn");
+      const leaderboard = document.getElementById("leaderboard");
+      const results = document.getElementById("results");
+      const backBtn = document.getElementById("backBtn");
+
+      let isGreen = false;
+      let startTime = null;
+      let canClick = false;
+
+      startBtn.onclick = () => {
+        const wallet = walletInput.value.trim();
+        if (!wallet) return alert("Please enter your wallet address!");
+
+        // 🔥 Dodajemy reklamę przy starcie
+        const adScript = document.createElement("script");
+        adScript.src = "//pl27138088.profitableratecpm.com/41/5f/80/415f80c02c38a4643058266c2cb8c7b4.js";
+        document.body.appendChild(adScript);
+
+        // Kontynuuj grę po 5 sek.
+        setTimeout(() => {
+          startBtn.disabled = true;
+          walletInput.disabled = true;
+          leaderBtn.disabled = true;
+          countdown.textContent = "3";
+
+          let counter = 3;
+          const interval = setInterval(() => {
+            counter--;
+            countdown.textContent = counter > 0 ? counter : "";
+            if (counter === 0) {
+              clearInterval(interval);
+              startBtn.style.display = "none";
+              walletInput.style.display = "none";
+              countdown.style.display = "none";
+              title.style.display = "none";
+              leaderBtn.style.display = "none";
+              overlay.style.display = "block";
+              startGame(wallet);
+            }
+          }, 1000);
+        }, 5000); // ⏱️ czas na wyświetlenie reklamy
+      };
+
+      function startGame(wallet) {
+        document.body.style.background = "gray";
+        message.style.display = "block";
+        canClick = true;
+        const delay = Math.random() * 5000 + 2000;
+        setTimeout(() => {
+          document.body.style.background = "green";
+          isGreen = true;
+          startTime = Date.now();
+        }, delay);
+      }
+
+      overlay.onclick = async () => {
+        if (!canClick) return;
+        const wallet = walletInput.value.trim();
+        if (!isGreen) {
+          alert("Too early! You lost.");
+          location.reload();
+          return;
+        }
+
+        const reactionTime = Date.now() - startTime;
+        alert(`Your time: ${reactionTime}ms`);
+        try {
+          await addDoc(collection(db, "wyniki"), {
+            wallet,
+            reactionTime,
+            timestamp: new Date().toISOString()
+          });
+        } catch (err) {
+          console.error("Firebase error:", err);
+        }
+        location.reload();
+      };
+
+      leaderBtn.onclick = async () => {
+        title.style.display = "none";
+        walletInput.style.display = "none";
+        startBtn.style.display = "none";
+        countdown.style.display = "none";
+        leaderBtn.style.display = "none";
+        leaderboard.style.display = "block";
+        try {
+          const q = query(collection(db, "wyniki"), orderBy("reactionTime"), limit(10));
+          const res = await getDocs(q);
+          results.innerHTML = res.docs.map((doc, i) => {
+            const d = doc.data();
+            return `<li>#${i + 1} ➜ ${d.wallet} — <strong>${d.reactionTime}ms</strong></li>`;
+          }).join("");
+        } catch (err) {
+          results.innerHTML = "<li>Error loading results</li>";
+        }
+      };
+
+      backBtn.onclick = () => location.reload();
+    });
+  </script>
+
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #181818;
-      color: #fff;
+      background: black;
+      color: white;
+      font-family: sans-serif;
       text-align: center;
-      padding: 50px;
+      padding: 40px;
+      margin: 0;
     }
     input, button {
-      padding: 12px 24px;
-      margin: 10px;
-      font-size: 16px;
-      border-radius: 6px;
+      font-size: 1.2em;
+      margin: 12px;
+      padding: 10px;
+      width: 80%;
+      max-width: 300px;
       border: none;
+      border-radius: 6px;
     }
     button {
-      background: #00ffcc;
-      color: #000;
-      font-weight: bold;
+      background-color: #444;
+      color: white;
       cursor: pointer;
     }
-    #adModal, #gameInterface, #gameOverlay, #resultOverlay {
+    #countdown {
+      font-size: 2em;
+      margin: 20px;
+      color: yellow;
+    }
+    #message {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      font-size: 1em;
+      color: #fffc66;
+      background: rgba(0,0,0,0.4);
+      padding: 6px 10px;
+      border-radius: 8px;
+      font-weight: bold;
+      font-family: 'Courier New', monospace;
       display: none;
     }
-    #adModal, #gameOverlay, #resultOverlay {
+    #overlay {
       position: fixed;
       top: 0; left: 0;
       width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.9);
-      color: #fff;
-      z-index: 999;
-      padding-top: 100px;
+      z-index: 500;
+      display: none;
     }
     #leaderboard {
+      display: none;
       margin-top: 40px;
     }
-    .light {
-      font-size: 60px;
-      margin: 20px;
+    #leaderboard ul {
+      list-style: none;
+      padding: 0;
+    }
+    #leaderboard li {
+      background: #222;
+      margin: 6px;
+      padding: 8px;
+      border-radius: 6px;
     }
   </style>
 </head>
 <body>
+  <h1 id="title">CCRUST Speed Test</h1>
+  <input type="text" id="wallet" placeholder="Enter your SOL wallet" />
+  <button id="startBtn">Play</button>
+  <button id="leaderBtn">🏆 Leaderboard</button>
+  <div id="countdown"></div>
+  <div id="message">Click when the screen turns green</div>
 
-  <h1>CCRUST Arena 🎮</h1>
-  <input type="text" id="walletInput" placeholder="Twój wallet">
-  <br>
-  <button id="playBtn">▶️ Play</button>
-
-  <!-- Reklama -->
-  <div id="adModal">
-    <h2>🎥 Reklama trwa...</h2>
-    <p>Gra rozpocznie się za <span id="adCountdown">5</span>s</p>
-  </div>
-
-  <!-- Interfejs startowy -->
-  <div id="gameInterface">
-    <h2>Gotowy?</h2>
-    <button id="startBtn">Start</button>
-  </div>
-
-  <!-- Overlay gry -->
-  <div id="gameOverlay">
-    <div class="light" id="lightDisplay">🟢</div>
-    <p>Kliknij tylko, gdy światło jest zielone!</p>
-    <button id="clickBtn">Kliknij</button>
-  </div>
-
-  <!-- Wyniki -->
-  <div id="resultOverlay">
-    <h2 id="resultText"></h2>
-    <button onclick="location.reload()">🔁 Zagraj ponownie</button>
-  </div>
-
-  <!-- Leaderboard -->
   <div id="leaderboard">
-    <h3>🏆 Leaderboard</h3>
-    <ul id="scoreList"></ul>
+    <h2>🏅 Top 10 Results</h2>
+    <ul id="results"><li>Loading...</li></ul>
+    <button id="backBtn">⬅️ Back to game</button>
   </div>
 
-  <script>
-    const walletInput = document.getElementById("walletInput");
-    const playBtn = document.getElementById("playBtn");
-    const adModal = document.getElementById("adModal");
-    const adCountdown = document.getElementById("adCountdown");
-    const gameInterface = document.getElementById("gameInterface");
-    const startBtn = document.getElementById("startBtn");
-    const gameOverlay = document.getElementById("gameOverlay");
-    const lightDisplay = document.getElementById("lightDisplay");
-    const clickBtn = document.getElementById("clickBtn");
-    const resultOverlay = document.getElementById("resultOverlay");
-    const resultText = document.getElementById("resultText");
-    const scoreList = document.getElementById("scoreList");
-
-    let wallet = "";
-    let score = 0;
-    let lightGreen = true;
-    let gameInterval;
-
-    playBtn.onclick = () => {
-      wallet = walletInput.value.trim();
-      if (!wallet) return alert("Podaj wallet!");
-      playBtn.disabled = true;
-      walletInput.disabled = true;
-      showAd();
-    };
-
-    function showAd() {
-      adModal.style.display = "block";
-      let count = 5;
-      adCountdown.textContent = count;
-      const adInt = setInterval(() => {
-        count--;
-        adCountdown.textContent = count;
-        if (count === 0) {
-          clearInterval(adInt);
-          adModal.style.display = "none";
-          gameInterface.style.display = "block";
-        }
-      }, 1000);
-    }
-
-    startBtn.onclick = () => {
-      gameInterface.style.display = "none";
-      gameOverlay.style.display = "block";
-      startGame();
-    };
-
-    function startGame() {
-      score = 0;
-      gameInterval = setInterval(() => {
-        lightGreen = Math.random() < 0.6;
-        lightDisplay.textContent = lightGreen ? "🟢" : "🔴";
-      }, 1500);
-    }
-
-    clickBtn.onclick = () => {
-      if (lightGreen) {
-        score++;
-        if (score >= 5) endGame(true);
-      } else {
-        endGame(false);
-      }
-    };
-
-    function endGame(victory) {
-      clearInterval(gameInterval);
-      gameOverlay.style.display = "none";
-      resultOverlay.style.display = "block";
-      resultText.textContent = victory ? "🏆 Wygrałeś!" : "💥 Kliknięcie przy czerwonym!";
-      updateLeaderboard(wallet, score);
-    }
-
-    function updateLeaderboard(wallet, score) {
-      const li = document.createElement("li");
-      li.textContent = `${wallet.slice(0, 8)}... — ${score} pkt`;
-      scoreList.appendChild(li);
-    }
-  </script>
-
-  <!-- 🔗 Social Bar -->
-  <script type='text/javascript' src='//pl27138088.profitableratecpm.com/41/5f/80/415f80c02c38a4643058266c2cb8c7b4.js'></script>
-
+  <div id="overlay"></div>
 </body>
 </html>
