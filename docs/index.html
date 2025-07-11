@@ -9,59 +9,78 @@
       background: #181818;
       color: #fff;
       text-align: center;
-      padding: 60px;
+      padding: 50px;
     }
     input, button {
       padding: 12px 24px;
       margin: 10px;
       font-size: 16px;
+      border-radius: 6px;
       border: none;
-      border-radius: 8px;
     }
     button {
-      background: #00ffff;
+      background: #00ffcc;
       color: #000;
       font-weight: bold;
       cursor: pointer;
     }
-    #adModal, #gameInterface, #gameArea {
+    #adModal, #gameInterface, #gameOverlay, #resultOverlay {
       display: none;
     }
-    #adModal {
+    #adModal, #gameOverlay, #resultOverlay {
       position: fixed;
       top: 0; left: 0;
       width: 100%; height: 100%;
-      background: #000;
+      background: rgba(0, 0, 0, 0.9);
       color: #fff;
-      padding-top: 100px;
       z-index: 999;
+      padding-top: 100px;
+    }
+    #leaderboard {
+      margin-top: 40px;
+    }
+    .light {
+      font-size: 60px;
+      margin: 20px;
     }
   </style>
 </head>
 <body>
 
-  <h1>CCRUST Arena 🎯</h1>
-  <input type="text" id="walletInput" placeholder="Podaj wallet">
+  <h1>CCRUST Arena 🎮</h1>
+  <input type="text" id="walletInput" placeholder="Twój wallet">
   <br>
   <button id="playBtn">▶️ Play</button>
 
   <!-- Reklama -->
   <div id="adModal">
     <h2>🎥 Reklama trwa...</h2>
-    <p>Gra rozpocznie się po zakończeniu</p>
-    <p id="adCountdown">5</p>
+    <p>Gra rozpocznie się za <span id="adCountdown">5</span>s</p>
   </div>
 
   <!-- Interfejs startowy -->
   <div id="gameInterface">
     <h2>Gotowy?</h2>
-    <button id="startGameBtn">Start</button>
+    <button id="startBtn">Start</button>
   </div>
 
-  <!-- Sekcja gry -->
-  <div id="gameArea">
-    <h2>🔥 Gra trwa...</h2>
-    <!-- Dodaj mechanikę gry tutaj -->
+  <!-- Overlay gry -->
+  <div id="gameOverlay">
+    <div class="light" id="lightDisplay">🟢</div>
+    <p>Kliknij tylko, gdy światło jest zielone!</p>
+    <button id="clickBtn">Kliknij</button>
+  </div>
+
+  <!-- Wyniki -->
+  <div id="resultOverlay">
+    <h2 id="resultText"></h2>
+    <button onclick="location.reload()">🔁 Zagraj ponownie</button>
+  </div>
+
+  <!-- Leaderboard -->
+  <div id="leaderboard">
+    <h3>🏆 Leaderboard</h3>
+    <ul id="scoreList"></ul>
   </div>
 
   <script>
@@ -70,51 +89,81 @@
     const adModal = document.getElementById("adModal");
     const adCountdown = document.getElementById("adCountdown");
     const gameInterface = document.getElementById("gameInterface");
-    const startGameBtn = document.getElementById("startGameBtn");
-    const gameArea = document.getElementById("gameArea");
+    const startBtn = document.getElementById("startBtn");
+    const gameOverlay = document.getElementById("gameOverlay");
+    const lightDisplay = document.getElementById("lightDisplay");
+    const clickBtn = document.getElementById("clickBtn");
+    const resultOverlay = document.getElementById("resultOverlay");
+    const resultText = document.getElementById("resultText");
+    const scoreList = document.getElementById("scoreList");
 
-    let currentWallet = "";
+    let wallet = "";
+    let score = 0;
+    let lightGreen = true;
+    let gameInterval;
 
     playBtn.onclick = () => {
-      const wallet = walletInput.value.trim();
+      wallet = walletInput.value.trim();
       if (!wallet) return alert("Podaj wallet!");
-      currentWallet = wallet;
-
       playBtn.disabled = true;
       walletInput.disabled = true;
-
-      showAdModal();
+      showAd();
     };
 
-    function showAdModal() {
+    function showAd() {
       adModal.style.display = "block";
-      let time = 5;
-      adCountdown.textContent = time;
-
-      const interval = setInterval(() => {
-        time--;
-        adCountdown.textContent = time;
-        if (time === 0) {
-          clearInterval(interval);
+      let count = 5;
+      adCountdown.textContent = count;
+      const adInt = setInterval(() => {
+        count--;
+        adCountdown.textContent = count;
+        if (count === 0) {
+          clearInterval(adInt);
           adModal.style.display = "none";
           gameInterface.style.display = "block";
         }
       }, 1000);
     }
 
-    startGameBtn.onclick = () => {
+    startBtn.onclick = () => {
       gameInterface.style.display = "none";
-      gameArea.style.display = "block";
-
-      // 🎯 Wygrana po 6 sekundach (testowo)
-      setTimeout(() => {
-        alert("🏆 Wygrałeś! Restart strony...");
-        setTimeout(() => location.reload(), 2000);
-      }, 6000);
+      gameOverlay.style.display = "block";
+      startGame();
     };
+
+    function startGame() {
+      score = 0;
+      gameInterval = setInterval(() => {
+        lightGreen = Math.random() < 0.6;
+        lightDisplay.textContent = lightGreen ? "🟢" : "🔴";
+      }, 1500);
+    }
+
+    clickBtn.onclick = () => {
+      if (lightGreen) {
+        score++;
+        if (score >= 5) endGame(true);
+      } else {
+        endGame(false);
+      }
+    };
+
+    function endGame(victory) {
+      clearInterval(gameInterval);
+      gameOverlay.style.display = "none";
+      resultOverlay.style.display = "block";
+      resultText.textContent = victory ? "🏆 Wygrałeś!" : "💥 Kliknięcie przy czerwonym!";
+      updateLeaderboard(wallet, score);
+    }
+
+    function updateLeaderboard(wallet, score) {
+      const li = document.createElement("li");
+      li.textContent = `${wallet.slice(0, 8)}... — ${score} pkt`;
+      scoreList.appendChild(li);
+    }
   </script>
 
-  <!-- 🔗 Social Bar reklama -->
+  <!-- 🔗 Social Bar -->
   <script type='text/javascript' src='//pl27138088.profitableratecpm.com/41/5f/80/415f80c02c38a4643058266c2cb8c7b4.js'></script>
 
 </body>
