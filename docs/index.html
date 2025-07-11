@@ -79,7 +79,19 @@
       font-weight: bold;
     }
     .adsbox {
-      margin: 20px auto;
+      margin: 40px auto 20px;
+      text-align: center;
+    }
+    @media screen and (min-width: 768px) {
+      .adsbox {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background: black;
+        z-index: 1000;
+        padding: 10px 0;
+      }
     }
     #timer {
       font-size: 1em;
@@ -95,13 +107,17 @@
   </style>
 </head>
 <body>
+  <p style="color:#999; font-size:0.9em;">🔄 Leaderboard refreshes every 12 hours</p>
+  <div id="logo">
+    <img src="logo.png" alt="CCRUST logo" style="width:100px; border-radius:8px; margin-bottom:10px;">
+  </div>
   <h1 id="title">CCRUST Speed Test</h1>
 
-  <!-- 📘 English game instructions -->
   <p id="description">
-    Enter your Lightning Address ⚡ and click Play. When the screen turns green — react as fast as you can!  
-    If your time is under 300ms, you’ll be entered into the Top 10 leaderboard.  
-    Pool rewards are divided based on rank.
+    Enter your Lightning Address ⚡ and click Play.  
+    When the screen turns green — react fast!  
+    Reaction under 300ms? You’re in the leaderboard.  
+    Pool rewards split by position.
   </p>
 
   <input type="text" id="wallet" placeholder="Enter your Lightning address ⚡" />
@@ -110,50 +126,38 @@
   <div id="countdown"></div>
   <div id="message">Click when the screen turns green</div>
 
-  <!-- 📺 A-ADS Advertisement -->
-  <div class="adsbox">
-    <iframe data-aa='2402384' src='//ad.a-ads.com/2402384?size=300x250' style='width:300px; height:250px; border:0px; padding:0; overflow:hidden; background-color: transparent;'></iframe>
-  </div>
-
   <div id="leaderboard">
-    <!-- ⏳ Countdown to leaderboard end -->
-    <div id="timer">End of leaderboard: loading...</div>
+    <div id="timer">Loading timer...</div>
     <div id="poolInfo">
       <h2>💰 Pool</h2>
-      <div id="poolAmount">20 sats</div>
+      <div id="poolAmount">400 sats</div>
       <p style="color:#aaa;">Pool will increase on time</p>
     </div>
     <h2>🏅 Top 10 Results</h2>
     <ul id="results"><li>Loading...</li></ul>
-    <button id="backBtn">⬅️ Back to game</button>
+    <button id="backBtn">⬅️ Back</button>
   </div>
 
   <div id="overlay"></div>
-  <!-- ⏱️ Countdown to leaderboard deadline -->
+
   <script>
     function updateTimer() {
       const endTime = new Date("2025-08-11T20:00:00+02:00").getTime();
       const now = Date.now();
       const diff = endTime - now;
-
       if (diff <= 0) {
         document.getElementById("timer").textContent = "End of leaderboard reached";
         return;
       }
-
-      const hours = Math.floor(diff / 1000 / 3600);
-      const minutes = Math.floor((diff % (3600 * 1000)) / 60000);
-      const seconds = Math.floor((diff % 60000) / 1000);
-
-      document.getElementById("timer").textContent =
-        `End of leaderboard: ${hours}h ${minutes}m ${seconds}s`;
+      const h = Math.floor(diff / 3600000);
+      const m = Math.floor((diff % 3600000) / 60000);
+      const s = Math.floor((diff % 60000) / 1000);
+      document.getElementById("timer").textContent = `End of leaderboard: ${h}h ${m}m ${s}s`;
     }
-
     setInterval(updateTimer, 1000);
     updateTimer();
   </script>
 
-  <!-- 🚀 Main game logic & Firebase setup -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-app.js";
     import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-firestore.js";
@@ -163,7 +167,6 @@
       authDomain: "ccrustst.firebaseapp.com",
       projectId: "ccrustst"
     };
-
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
@@ -179,30 +182,21 @@
       const results = document.getElementById("results");
       const backBtn = document.getElementById("backBtn");
 
-      let isGreen = false;
-      let startTime = null;
-      let canClick = false;
+      let isGreen = false, startTime = null, canClick = false;
 
       startBtn.onclick = () => {
         const wallet = walletInput.value.trim();
-        if (!wallet) return alert("Please enter your Lightning address!");
-
-        startBtn.disabled = true;
-        walletInput.disabled = true;
-        leaderBtn.disabled = true;
+        if (!wallet) return alert("Enter your Lightning address!");
+        startBtn.disabled = walletInput.disabled = leaderBtn.disabled = true;
         countdown.textContent = "3";
-
         let counter = 3;
         const interval = setInterval(() => {
           counter--;
           countdown.textContent = counter > 0 ? counter : "";
           if (counter === 0) {
             clearInterval(interval);
-            startBtn.style.display = "none";
-            walletInput.style.display = "none";
-            countdown.style.display = "none";
-            title.style.display = "none";
-            leaderBtn.style.display = "none";
+            startBtn.style.display = walletInput.style.display = countdown.style.display =
+              title.style.display = leaderBtn.style.display = "none";
             overlay.style.display = "block";
             startGame(wallet);
           }
@@ -229,10 +223,8 @@
           location.reload();
           return;
         }
-
         const reactionTime = Date.now() - startTime;
         alert(`Your time: ${reactionTime}ms`);
-
         if (reactionTime < 300) {
           try {
             await addDoc(collection(db, "wyniki"), {
@@ -240,23 +232,19 @@
               reactionTime,
               timestamp: new Date().toISOString()
             });
-          } catch (err) {
-            console.error("Firebase error:", err);
+          } catch (
+            } catch (err) {
+            console.error("Save error:", err);
           }
         }
-
         location.reload();
       };
 
       leaderBtn.onclick = async () => {
-        title.style.display = "none";
-        walletInput.style.display = "none";
-        startBtn.style.display = "none";
-        countdown.style.display = "none";
-        leaderBtn.style.display = "none";
+        title.style.display = walletInput.style.display = startBtn.style.display =
+          countdown.style.display = leaderBtn.style.display = "none";
         leaderboard.style.display = "block";
 
-        // 🔒 Load static leaderboard file
         try {
           const res = await fetch("top10.json");
           const data = await res.json();
@@ -273,5 +261,11 @@
       backBtn.onclick = () => location.reload();
     });
   </script>
+
+  <!-- 📺 A-ADS ad (bottom-fixed on desktop, classic on mobile) -->
+  <div class="adsbox">
+    <iframe data-aa='2402384' src='//ad.a-ads.com/2402384?size=300x250'
+      style='width:300px; height:250px; border:0px; padding:0; overflow:hidden; background-color: transparent;'></iframe>
+  </div>
 </body>
 </html>
