@@ -79,19 +79,8 @@
       color: gold;
       font-weight: bold;
     }
-    #adUnderPlay,
-    #adUnderLeaderboard,
-    #adOverlayInside {
+    .adsbox {
       margin: 20px auto;
-      width: 300px;
-      height: 250px;
-      z-index: 500;
-    }
-    #adOverlayInside {
-      position: absolute;
-      bottom: 40px;
-      left: 50%;
-      transform: translateX(-50%);
     }
   </style>
 </head>
@@ -103,8 +92,10 @@
   <div id="countdown"></div>
   <div id="message">Click when the screen turns green</div>
 
-  <!-- 🔵 Reklama pod Play -->
-  <div id="adUnderPlay"></div>
+  <!-- 📺 Reklama A-ADS -->
+  <div class="adsbox">
+    <iframe data-aa='2402384' src='//ad.a-ads.com/2402384?size=300x250' style='width:300px; height:250px; border:0px; padding:0; overflow:hidden; background-color: transparent;'></iframe>
+  </div>
 
   <div id="leaderboard">
     <div id="poolInfo">
@@ -113,29 +104,10 @@
     </div>
     <h2>🏅 Top 10 Results</h2>
     <ul id="results"><li>Loading...</li></ul>
-
-    <!-- 🔴 Reklama pod leaderboardem -->
-    <div id="adUnderLeaderboard"></div>
-
     <button id="backBtn">⬅️ Back to game</button>
   </div>
 
-  <div id="overlay">
-    <!-- 🟡 Reklama w overlayu gry -->
-    <div id="adOverlayInside"></div>
-  </div>
-
-  <!-- 🧠 Skrypt reklamowy -->
-  <script type="text/javascript">
-    atOptions = {
-      'key': 'ddcd93e7f9d554d3017b67f3f79cb8fd',
-      'format': 'iframe',
-      'height': 250,
-      'width': 300,
-      'params': {}
-    };
-  </script>
-  <script type="text/javascript" src="//www.highperformanceformat.com/ddcd93e7f9d554d3017b67f3f79cb8fd/invoke.js"></script>
+  <div id="overlay"></div>
 
   <!-- 🚀 Firebase i logika gry -->
   <script type="module">
@@ -250,7 +222,7 @@
             const share = percentages[i] || 0;
             return `<li>#${i + 1} ➜ ${d.wallet} — <strong>${d.reactionTime}ms</strong> <span style="float:right; color:lime;">${share}% pool</span></li>`;
           }).join("");
-          } catch (err) {
+        } catch (err) {
           results.innerHTML = "<li>Error loading results</li>";
         }
       };
