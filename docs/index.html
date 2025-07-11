@@ -88,7 +88,7 @@
         const reactionTime = Date.now() - startTime;
         alert(`Your time: ${reactionTime}ms`);
 
-        // ✅ Zapis tylko jeśli wynik < 300ms
+        // ✅ Zapis tylko jeśli czas poniżej 300ms
         if (reactionTime < 300) {
           try {
             await addDoc(collection(db, "wyniki"), {
@@ -189,20 +189,12 @@
       padding: 8px;
       border-radius: 6px;
     }
-    /* 📦 Styl banera reklamowego (opcjonalny) */
-    #bcBanner {
+    #adBannerInside {
       position: absolute;
       bottom: 20px;
       left: 50%;
       transform: translateX(-50%);
-      width: 320px;
-      height: 100px;
-      background-image: url('TWÓJ_LINK_DO_BANERA');
-      background-size: cover;
-      background-position: center;
-      border-radius: 12px;
       z-index: 1001;
-      box-shadow: 0 0 10px rgba(0,0,0,0.5);
     }
   </style>
 </head>
@@ -221,8 +213,13 @@
   </div>
 
   <div id="overlay">
-    <!-- 📦 Baner reklamowy w dolnej części gry -->
-    <div id="bcBanner"></div>
+    <!-- 📦 Reklama A-ADS w dolnej części gry -->
+    <div id="adBannerInside">
+      <iframe data-aa="2402384"
+        src="//ad.a-ads.com/2402384?size=300x250"
+        style="width:300px; height:250px; border:0px; padding:0; overflow:hidden; background-color: transparent;">
+      </iframe>
+    </div>
   </div>
 </body>
-    </html>
+</html>
