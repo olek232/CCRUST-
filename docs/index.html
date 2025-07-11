@@ -82,10 +82,29 @@
     .adsbox {
       margin: 20px auto;
     }
+    #timer {
+      font-size: 1em;
+      color: #ccc;
+      margin-bottom: 10px;
+    }
+    #description {
+      font-size: 1em;
+      color: #ccc;
+      max-width: 500px;
+      margin: 0 auto;
+    }
   </style>
 </head>
 <body>
   <h1 id="title">CCRUST Speed Test</h1>
+
+  <!-- 📘 Game instructions in English -->
+  <p id="description">
+    Enter your Lightning Address ⚡ and click Play. When the screen turns green — react as fast as you can!  
+    If your time is under 300ms, you’ll be entered into the Top 10 leaderboard.  
+    Pool rewards are divided based on rank.
+  </p>
+
   <input type="text" id="wallet" placeholder="Enter your Lightning address ⚡" />
   <button id="startBtn">Play</button>
   <button id="leaderBtn">🏆 Leaderboard</button>
@@ -98,10 +117,15 @@
   </div>
 
   <div id="leaderboard">
+    <!-- ⏳ Timer until leaderboard closes -->
+    <div id="timer">End of leaderboard: loading...</div>
+
     <div id="poolInfo">
       <h2>💰 Pool</h2>
-      <div id="poolAmount">x sats</div>
+      <div id="poolAmount">20 sats</div>
+      <p style="color:#aaa;">Pool will increase on time</p>
     </div>
+
     <h2>🏅 Top 10 Results</h2>
     <ul id="results"><li>Loading...</li></ul>
     <button id="backBtn">⬅️ Back to game</button>
@@ -109,10 +133,33 @@
 
   <div id="overlay"></div>
 
-  <!-- 🚀 Firebase i logika gry -->
+  <!-- ⏱️ Timer script -->
+  <script>
+    function updateTimer() {
+      const endTime = new Date("2025-08-11T20:00:00+02:00").getTime();
+      const now = Date.now();
+      const diff = endTime - now;
+
+      if (diff <= 0) {
+        document.getElementById("timer").textContent = "End of leaderboard reached";
+        return;
+      }
+
+      const hours = Math.floor(diff / 1000 / 3600);
+      const minutes = Math.floor((diff % (3600 * 1000)) / 60000);
+      const seconds = Math.floor((diff % 60000) / 1000);
+
+      document.getElementById("timer").textContent = `End of leaderboard: ${hours}h ${minutes}m ${seconds}s`;
+    }
+
+    setInterval(updateTimer, 1000);
+    updateTimer();
+  </script>
+
+  <!-- 🚀 Gameplay logic -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-app.js";
-    import { getFirestore, collection, addDoc, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-firestore.js";
+    import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyDmakxhD7bNdeZX69r7wcC8sNzy0uuWpwY",
@@ -200,6 +247,9 @@
             console.error("Firebase error:", err);
           }
         }
+        } catch (err) {
+          console.error("Error saving result:", err);
+        }
 
         location.reload();
       };
@@ -212,18 +262,16 @@
         leaderBtn.style.display = "none";
         leaderboard.style.display = "block";
 
-        const percentages = [35, 20, 10, 5, 5, 5, 5, 5, 5, 5];
-
+        // 🔒 No Firestore reads here; placeholder for static top10.json loading
         try {
-          const q = query(collection(db, "wyniki"), orderBy("reactionTime"), limit(10));
-          const res = await getDocs(q);
-          results.innerHTML = res.docs.map((doc, i) => {
-            const d = doc.data();
-            const share = percentages[i] || 0;
-            return `<li>#${i + 1} ➜ ${d.wallet} — <strong>${d.reactionTime}ms</strong> <span style="float:right; color:lime;">${share}% pool</span></li>`;
+          const res = await fetch("top10.json");
+          const data = await res.json();
+          results.innerHTML = data.map((entry, i) => {
+            const share = [35, 20, 10, 5, 5, 5, 5, 5, 5, 5][i] || 0;
+            return `<li>#${i + 1} ➜ ${entry.wallet} — <strong>${entry.reactionTime}ms</strong> <span style="float:right; color:lime;">${share}% pool</span></li>`;
           }).join("");
         } catch (err) {
-          results.innerHTML = "<li>Error loading results</li>";
+          results.innerHTML = "<li>Error loading static leaderboard</li>";
         }
       };
 
