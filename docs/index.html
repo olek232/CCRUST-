@@ -44,6 +44,7 @@
       font-weight: bold;
       font-family: 'Courier New', monospace;
       display: none;
+      z-index: 9000;
     }
     #overlay {
       position: fixed;
@@ -51,7 +52,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      z-index: 500;
+      z-index: 8000;
       display: none;
     }
     #leaderboard {
@@ -89,8 +90,11 @@
         left: 0;
         width: 100%;
         background: black;
-        z-index: 1000;
+        z-index: 7000;
         padding: 10px 0;
+      }
+      .adsbox iframe {
+        pointer-events: none;
       }
     }
     #timer {
@@ -223,7 +227,7 @@
           location.reload();
           return;
         }
-        const reactionTime = Date.now() - startTime;
+        const reactionconst reactionTime = Date.now() - startTime;
         alert(`Your time: ${reactionTime}ms`);
         if (reactionTime < 300) {
           try {
@@ -233,8 +237,7 @@
               timestamp: new Date().toISOString()
             });
           } catch (err) {
-            console.error("Save error:",
-                          console.error("Save error:", err);
+            console.error("Save error:", err);
           }
         }
         location.reload();
@@ -244,7 +247,6 @@
         title.style.display = walletInput.style.display = startBtn.style.display =
           countdown.style.display = leaderBtn.style.display = "none";
         leaderboard.style.display = "block";
-
         try {
           const res = await fetch("top10.json");
           const data = await res.json();
@@ -262,7 +264,7 @@
     });
   </script>
 
-  <!-- 📺 A-ADS ad (bottom-fixed on desktop, standard on mobile) -->
+  <!-- 📺 A-ADS ad (desktop fixed, mobile default) -->
   <div class="adsbox">
     <iframe data-aa='2402384' src='//ad.a-ads.com/2402384?size=300x250'
       style='width:300px; height:250px; border:0px; padding:0; overflow:hidden; background-color: transparent;'></iframe>
