@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <title>CCRUST Speed Test</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <style>
     body {
       background: black;
@@ -98,7 +97,7 @@
 <body>
   <h1 id="title">CCRUST Speed Test</h1>
 
-  <!-- 📘 Game instructions in English -->
+  <!-- 📘 English game instructions -->
   <p id="description">
     Enter your Lightning Address ⚡ and click Play. When the screen turns green — react as fast as you can!  
     If your time is under 300ms, you’ll be entered into the Top 10 leaderboard.  
@@ -111,29 +110,26 @@
   <div id="countdown"></div>
   <div id="message">Click when the screen turns green</div>
 
-  <!-- 📺 Reklama A-ADS -->
+  <!-- 📺 A-ADS Advertisement -->
   <div class="adsbox">
     <iframe data-aa='2402384' src='//ad.a-ads.com/2402384?size=300x250' style='width:300px; height:250px; border:0px; padding:0; overflow:hidden; background-color: transparent;'></iframe>
   </div>
 
   <div id="leaderboard">
-    <!-- ⏳ Timer until leaderboard closes -->
+    <!-- ⏳ Countdown to leaderboard end -->
     <div id="timer">End of leaderboard: loading...</div>
-
     <div id="poolInfo">
       <h2>💰 Pool</h2>
       <div id="poolAmount">20 sats</div>
       <p style="color:#aaa;">Pool will increase on time</p>
     </div>
-
     <h2>🏅 Top 10 Results</h2>
     <ul id="results"><li>Loading...</li></ul>
     <button id="backBtn">⬅️ Back to game</button>
   </div>
 
   <div id="overlay"></div>
-
-  <!-- ⏱️ Timer script -->
+  <!-- ⏱️ Countdown to leaderboard deadline -->
   <script>
     function updateTimer() {
       const endTime = new Date("2025-08-11T20:00:00+02:00").getTime();
@@ -149,14 +145,15 @@
       const minutes = Math.floor((diff % (3600 * 1000)) / 60000);
       const seconds = Math.floor((diff % 60000) / 1000);
 
-      document.getElementById("timer").textContent = `End of leaderboard: ${hours}h ${minutes}m ${seconds}s`;
+      document.getElementById("timer").textContent =
+        `End of leaderboard: ${hours}h ${minutes}m ${seconds}s`;
     }
 
     setInterval(updateTimer, 1000);
     updateTimer();
   </script>
 
-  <!-- 🚀 Gameplay logic -->
+  <!-- 🚀 Main game logic & Firebase setup -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-app.js";
     import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-firestore.js";
@@ -247,9 +244,6 @@
             console.error("Firebase error:", err);
           }
         }
-        } catch (err) {
-          console.error("Error saving result:", err);
-        }
 
         location.reload();
       };
@@ -262,16 +256,17 @@
         leaderBtn.style.display = "none";
         leaderboard.style.display = "block";
 
-        // 🔒 No Firestore reads here; placeholder for static top10.json loading
+        // 🔒 Load static leaderboard file
         try {
           const res = await fetch("top10.json");
           const data = await res.json();
           results.innerHTML = data.map((entry, i) => {
             const share = [35, 20, 10, 5, 5, 5, 5, 5, 5, 5][i] || 0;
-            return `<li>#${i + 1} ➜ ${entry.wallet} — <strong>${entry.reactionTime}ms</strong> <span style="float:right; color:lime;">${share}% pool</span></li>`;
+            return `<li>#${i + 1} ➜ ${entry.wallet} — <strong>${entry.reactionTime}ms</strong>
+              <span style="float:right; color:lime;">${share}% pool</span></li>`;
           }).join("");
         } catch (err) {
-          results.innerHTML = "<li>Error loading static leaderboard</li>";
+          results.innerHTML = "<li>Error loading leaderboard</li>";
         }
       };
 
