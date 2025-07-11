@@ -5,128 +5,6 @@
   <title>CCRUST Speed Test</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Firebase SDK -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-app.js";
-    import { getFirestore, collection, addDoc, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-firestore.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyDmakxhD7bNdeZX69r7wcC8sNzy0uuWpwY",
-      authDomain: "ccrustst.firebaseapp.com",
-      projectId: "ccrustst"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
-    window.addEventListener("DOMContentLoaded", () => {
-      const walletInput = document.getElementById("wallet");
-      const startBtn = document.getElementById("startBtn");
-      const countdown = document.getElementById("countdown");
-      const message = document.getElementById("message");
-      const overlay = document.getElementById("overlay");
-      const title = document.getElementById("title");
-      const leaderBtn = document.getElementById("leaderBtn");
-      const leaderboard = document.getElementById("leaderboard");
-      const results = document.getElementById("results");
-      const backBtn = document.getElementById("backBtn");
-
-      let isGreen = false;
-      let startTime = null;
-      let canClick = false;
-
-      startBtn.onclick = () => {
-        const wallet = walletInput.value.trim();
-        if (!wallet) return alert("Please enter your Lightning address!");
-
-        startBtn.disabled = true;
-        walletInput.disabled = true;
-        leaderBtn.disabled = true;
-        countdown.textContent = "3";
-
-        let counter = 3;
-        const interval = setInterval(() => {
-          counter--;
-          countdown.textContent = counter > 0 ? counter : "";
-          if (counter === 0) {
-            clearInterval(interval);
-            startBtn.style.display = "none";
-            walletInput.style.display = "none";
-            countdown.style.display = "none";
-            title.style.display = "none";
-            leaderBtn.style.display = "none";
-            overlay.style.display = "block";
-            startGame(wallet);
-          }
-        }, 1000);
-      };
-
-      function startGame(wallet) {
-        document.body.style.background = "gray";
-        message.style.display = "block";
-        canClick = true;
-        const delay = Math.random() * 5000 + 2000;
-        setTimeout(() => {
-          document.body.style.background = "green";
-          isGreen = true;
-          startTime = Date.now();
-        }, delay);
-      }
-
-      overlay.onclick = async () => {
-        if (!canClick) return;
-        const wallet = walletInput.value.trim();
-        if (!isGreen) {
-          alert("Too early! You lost.");
-          location.reload();
-          return;
-        }
-
-        const reactionTime = Date.now() - startTime;
-        alert(`Your time: ${reactionTime}ms`);
-
-        if (reactionTime < 300) {
-          try {
-            await addDoc(collection(db, "wyniki"), {
-              wallet,
-              reactionTime,
-              timestamp: new Date().toISOString()
-            });
-          } catch (err) {
-            console.error("Firebase error:", err);
-          }
-        }
-
-        location.reload();
-      };
-
-      leaderBtn.onclick = async () => {
-        title.style.display = "none";
-        walletInput.style.display = "none";
-        startBtn.style.display = "none";
-        countdown.style.display = "none";
-        leaderBtn.style.display = "none";
-        leaderboard.style.display = "block";
-
-        const percentages = [35, 20, 10, 5, 5, 5, 5, 5, 5, 5];
-
-        try {
-          const q = query(collection(db, "wyniki"), orderBy("reactionTime"), limit(10));
-          const res = await getDocs(q);
-          results.innerHTML = res.docs.map((doc, i) => {
-            const d = doc.data();
-            const share = percentages[i] || 0;
-            return `<li>#${i + 1} ➜ ${d.wallet} — <strong>${d.reactionTime}ms</strong> <span style="float:right; color:lime;">${share}% pool</span></li>`;
-          }).join("");
-        } catch (err) {
-          results.innerHTML = "<li>Error loading results</li>";
-        }
-      };
-
-      backBtn.onclick = () => location.reload();
-    });
-  </script>
-
   <style>
     body {
       background: black;
@@ -250,14 +128,135 @@
   <!-- 🧠 Skrypt reklamowy -->
   <script type="text/javascript">
     atOptions = {
-      'key' : 'ddcd93e7f9d554d3017b67f3f79cb8fd',
-      'format' : 'iframe',
-      'height' : 250,
-      'width' : 300,
-      'params' : {}
+      'key': 'ddcd93e7f9d554d3017b67f3f79cb8fd',
+      'format': 'iframe',
+      'height': 250,
+      'width': 300,
+      'params': {}
     };
   </script>
-  <script type="text/javascript" src="//www.highperformanceformat.com/ddcd93e7f9d554d301
-    <script type="text/javascript" src="//www.highperformanceformat.com/ddcd93e7f9d554d3017b67f3f79cb8fd/invoke.js"></script>
+  <script type="text/javascript" src="//www.highperformanceformat.com/ddcd93e7f9d554d3017b67f3f79cb8fd/invoke.js"></script>
+
+  <!-- 🚀 Firebase i logika gry -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-app.js";
+    import { getFirestore, collection, addDoc, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDmakxhD7bNdeZX69r7wcC8sNzy0uuWpwY",
+      authDomain: "ccrustst.firebaseapp.com",
+      projectId: "ccrustst"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    window.addEventListener("DOMContentLoaded", () => {
+      const walletInput = document.getElementById("wallet");
+      const startBtn = document.getElementById("startBtn");
+      const countdown = document.getElementById("countdown");
+      const message = document.getElementById("message");
+      const overlay = document.getElementById("overlay");
+      const title = document.getElementById("title");
+      const leaderBtn = document.getElementById("leaderBtn");
+      const leaderboard = document.getElementById("leaderboard");
+      const results = document.getElementById("results");
+      const backBtn = document.getElementById("backBtn");
+
+      let isGreen = false;
+      let startTime = null;
+      let canClick = false;
+
+      startBtn.onclick = () => {
+        const wallet = walletInput.value.trim();
+        if (!wallet) return alert("Please enter your Lightning address!");
+
+        startBtn.disabled = true;
+        walletInput.disabled = true;
+        leaderBtn.disabled = true;
+        countdown.textContent = "3";
+
+        let counter = 3;
+        const interval = setInterval(() => {
+          counter--;
+          countdown.textContent = counter > 0 ? counter : "";
+          if (counter === 0) {
+            clearInterval(interval);
+            startBtn.style.display = "none";
+            walletInput.style.display = "none";
+            countdown.style.display = "none";
+            title.style.display = "none";
+            leaderBtn.style.display = "none";
+            overlay.style.display = "block";
+            startGame(wallet);
+          }
+        }, 1000);
+      };
+
+      function startGame(wallet) {
+        document.body.style.background = "gray";
+        message.style.display = "block";
+        canClick = true;
+        const delay = Math.random() * 5000 + 2000;
+        setTimeout(() => {
+          document.body.style.background = "green";
+          isGreen = true;
+          startTime = Date.now();
+        }, delay);
+      }
+
+      overlay.onclick = async () => {
+        if (!canClick) return;
+        const wallet = walletInput.value.trim();
+        if (!isGreen) {
+          alert("Too early! You lost.");
+          location.reload();
+          return;
+        }
+
+        const reactionTime = Date.now() - startTime;
+        alert(`Your time: ${reactionTime}ms`);
+
+        if (reactionTime < 300) {
+          try {
+            await addDoc(collection(db, "wyniki"), {
+              wallet,
+              reactionTime,
+              timestamp: new Date().toISOString()
+            });
+          } catch (err) {
+            console.error("Firebase error:", err);
+          }
+        }
+
+        location.reload();
+      };
+
+      leaderBtn.onclick = async () => {
+        title.style.display = "none";
+        walletInput.style.display = "none";
+        startBtn.style.display = "none";
+        countdown.style.display = "none";
+        leaderBtn.style.display = "none";
+        leaderboard.style.display = "block";
+
+        const percentages = [35, 20, 10, 5, 5, 5, 5, 5, 5, 5];
+
+        try {
+          const q = query(collection(db, "wyniki"), orderBy("reactionTime"), limit(10));
+          const res = await getDocs(q);
+          results.innerHTML = res.docs.map((doc, i) => {
+            const d = doc.data();
+            const share = percentages[i] || 0;
+            return `<li>#${i + 1} ➜ ${d.wallet} — <strong>${d.reactionTime}ms</strong> <span style="float:right; color:lime;">${share}% pool</span></li>`;
+          }).join("");
+          } catch (err) {
+          results.innerHTML = "<li>Error loading results</li>";
+        }
+      };
+
+      backBtn.onclick = () => location.reload();
+    });
+  </script>
 </body>
 </html>
