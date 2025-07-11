@@ -4,8 +4,6 @@
   <meta charset="UTF-8" />
   <title>CCRUST Speed Test</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <!-- Reklamowy metatag -->
   <meta name="c0123b2e645f601a17c30f431ab96d9fd4407734" content="c0123b2e645f601a17c30f431ab96d9fd4407734" />
 
   <!-- Firebase SDK -->
@@ -40,8 +38,8 @@
 
       startBtn.onclick = () => {
         const wallet = walletInput.value.trim();
-        if (!wallet) return alert("Please enter your wallet address!");
-
+        if (!wallet) return alert("Please enter your Lightning address!");
+        
         startBtn.disabled = true;
         walletInput.disabled = true;
         leaderBtn.disabled = true;
@@ -205,13 +203,13 @@
 </head>
 <body>
   <h1 id="title">CCRUST Speed Test</h1>
-  <input type="text" id="wallet" placeholder="Enter your SOL wallet" />
+  <input type="text" id="wallet" placeholder="Enter your Lightning address ⚡" />
   <button id="startBtn">Play</button>
   <button id="leaderBtn">🏆 Leaderboard</button>
   <div id="countdown"></div>
   <div id="message">Click when the screen turns green</div>
 
-  <!-- 📦 Baner reklamowy A-ADS w menu -->
+  <!-- 📦 Reklama w menu -->
   <div id="adBannerMenu">
     <iframe data-aa="2402384"
       src="//ad.a-ads.com/2402384?size=300x250"
@@ -226,7 +224,7 @@
   </div>
 
   <div id="overlay">
-    <!-- 📦 Reklama A-ADS podczas gry -->
+    <!-- 📦 Reklama podczas gry -->
     <div id="adBannerInside">
       <iframe data-aa="2402384"
         src="//ad.a-ads.com/2402384?size=300x250"
