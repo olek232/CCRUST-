@@ -5,9 +5,6 @@
   <title>CCRUST Speed Test</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- ✅ Metatag weryfikacyjny -->
-  <meta name="c0123b2e645f601a17c30f431ab96d9fd4407734" content="c0123b2e645f601a17c30f431ab96d9fd4407734" />
-
   <!-- Firebase SDK -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-app.js";
@@ -204,10 +201,30 @@
       color: gold;
       font-weight: bold;
     }
+    #adHighPerformance {
+      margin: 20px auto;
+      width: 300px;
+      height: 250px;
+      z-index: 500;
+    }
   </style>
 </head>
 <body>
   <h1 id="title">CCRUST Speed Test</h1>
+
+  <!-- ⚡ Reklama HighPerformanceFormat -->
+  <div id="adHighPerformance"></div>
+  <script type="text/javascript">
+    atOptions = {
+      'key' : 'ddcd93e7f9d554d3017b67f3f79cb8fd',
+      'format' : 'iframe',
+      'height' : 250,
+      'width' : 300,
+      'params' : {}
+    };
+  </script>
+  <script type="text/javascript" src="//www.highperformanceformat.com/ddcd93e7f9d554d3017b67f3f79cb8fd/invoke.js"></script>
+
   <input type="text" id="wallet" placeholder="Enter your Lightning address ⚡" />
   <button id="startBtn">Play</button>
   <button id="leaderBtn">🏆 Leaderboard</button>
