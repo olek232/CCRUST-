@@ -2,23 +2,29 @@
 <html lang="pl">
 <head>
   <meta charset="UTF-8">
-  <title>CCRUST Game</title>
+  <title>CCRUST Arena</title>
   <style>
     body {
-      font-family: sans-serif;
-      background: #222;
+      font-family: Arial, sans-serif;
+      background: #181818;
       color: #fff;
       text-align: center;
-      padding: 50px;
+      padding: 60px;
     }
     input, button {
-      padding: 10px;
-      font-size: 16px;
+      padding: 12px 24px;
       margin: 10px;
-      border-radius: 5px;
+      font-size: 16px;
       border: none;
+      border-radius: 8px;
     }
-    #adModal, #gameInterface {
+    button {
+      background: #00ffff;
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    #adModal, #gameInterface, #gameArea {
       display: none;
     }
     #adModal {
@@ -27,35 +33,35 @@
       width: 100%; height: 100%;
       background: #000;
       color: #fff;
-      z-index: 999;
       padding-top: 100px;
+      z-index: 999;
     }
   </style>
 </head>
 <body>
 
-  <h1>CCRUST Arena 🎮</h1>
-  <input type="text" id="walletInput" placeholder="Twój wallet">
+  <h1>CCRUST Arena 🎯</h1>
+  <input type="text" id="walletInput" placeholder="Podaj wallet">
   <br>
   <button id="playBtn">▶️ Play</button>
 
-  <!-- Ekran reklamy -->
+  <!-- Reklama -->
   <div id="adModal">
     <h2>🎥 Reklama trwa...</h2>
-    <p>Gra za chwilę się rozpocznie</p>
+    <p>Gra rozpocznie się po zakończeniu</p>
     <p id="adCountdown">5</p>
   </div>
 
-  <!-- Ekran gry z przyciskiem Start -->
+  <!-- Interfejs startowy -->
   <div id="gameInterface">
     <h2>Gotowy?</h2>
-    <button onclick="startGame()" id="startGameBtn">🎯 Start</button>
+    <button id="startGameBtn">Start</button>
   </div>
 
-  <!-- Tu Twoja gra -->
-  <div id="gameArea" style="display:none;">
-    <h2>🔫 Gra trwa...</h2>
-    <!-- Możesz dodać tu elementy gry -->
+  <!-- Sekcja gry -->
+  <div id="gameArea">
+    <h2>🔥 Gra trwa...</h2>
+    <!-- Dodaj mechanikę gry tutaj -->
   </div>
 
   <script>
@@ -64,16 +70,16 @@
     const adModal = document.getElementById("adModal");
     const adCountdown = document.getElementById("adCountdown");
     const gameInterface = document.getElementById("gameInterface");
+    const startGameBtn = document.getElementById("startGameBtn");
     const gameArea = document.getElementById("gameArea");
 
     let currentWallet = "";
 
     playBtn.onclick = () => {
       const wallet = walletInput.value.trim();
-      if (!wallet) return alert("Podaj swój wallet!");
+      if (!wallet) return alert("Podaj wallet!");
       currentWallet = wallet;
 
-      // Zablokuj pola
       playBtn.disabled = true;
       walletInput.disabled = true;
 
@@ -96,22 +102,16 @@
       }, 1000);
     }
 
-    function startGame() {
+    startGameBtn.onclick = () => {
       gameInterface.style.display = "none";
       gameArea.style.display = "block";
 
-      // Tu dodaj mechanikę gry — testowo wygrana po 5 sek.
+      // 🎯 Wygrana po 6 sekundach testowo
       setTimeout(() => {
-        alert("🏆 Wygrałeś!");
-        resetGame();
-      }, 5000);
-    }
-
-    function resetGame() {
-      setTimeout(() => {
-        location.reload(); // 🔁 pełny restart strony
-      }, 2000);
-    }
+        alert("🏆 Wygrałeś! Restart strony...");
+        setTimeout(() => location.reload(), 2000);
+      }, 6000);
+    };
   </script>
 
 </body>
