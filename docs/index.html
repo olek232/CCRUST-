@@ -5,7 +5,7 @@
   <title>CCRUST Speed Test</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Reklamowy metatag API -->
+  <!-- Reklamowy metatag -->
   <meta name="c0123b2e645f601a17c30f431ab96d9fd4407734" content="c0123b2e645f601a17c30f431ab96d9fd4407734" />
 
   <!-- Firebase SDK -->
@@ -88,7 +88,6 @@
         const reactionTime = Date.now() - startTime;
         alert(`Your time: ${reactionTime}ms`);
 
-        // ✅ Zapis tylko jeśli czas poniżej 300ms
         if (reactionTime < 300) {
           try {
             await addDoc(collection(db, "wyniki"), {
@@ -189,6 +188,12 @@
       padding: 8px;
       border-radius: 6px;
     }
+    #adBannerMenu {
+      margin: 20px auto;
+      width: 300px;
+      height: 250px;
+      z-index: 500;
+    }
     #adBannerInside {
       position: absolute;
       bottom: 20px;
@@ -206,6 +211,14 @@
   <div id="countdown"></div>
   <div id="message">Click when the screen turns green</div>
 
+  <!-- 📦 Baner reklamowy A-ADS w menu -->
+  <div id="adBannerMenu">
+    <iframe data-aa="2402384"
+      src="//ad.a-ads.com/2402384?size=300x250"
+      style="width:300px; height:250px; border:0px; padding:0; overflow:hidden; background-color: transparent;">
+    </iframe>
+  </div>
+
   <div id="leaderboard">
     <h2>🏅 Top 10 Results</h2>
     <ul id="results"><li>Loading...</li></ul>
@@ -213,7 +226,7 @@
   </div>
 
   <div id="overlay">
-    <!-- 📦 Reklama A-ADS w dolnej części gry -->
+    <!-- 📦 Reklama A-ADS podczas gry -->
     <div id="adBannerInside">
       <iframe data-aa="2402384"
         src="//ad.a-ads.com/2402384?size=300x250"
