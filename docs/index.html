@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <title>CCRUST Speed Test</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="c0123b2e645f601a17c30f431ab96d9fd4407734" content="c0123b2e645f601a17c30f431ab96d9fd4407734" />
+  <meta name="a-ads" content="2402384" />
 
   <!-- Firebase SDK -->
   <script type="module">
@@ -39,7 +39,7 @@
       startBtn.onclick = () => {
         const wallet = walletInput.value.trim();
         if (!wallet) return alert("Please enter your Lightning address!");
-        
+
         startBtn.disabled = true;
         walletInput.disabled = true;
         leaderBtn.disabled = true;
@@ -108,12 +108,16 @@
         countdown.style.display = "none";
         leaderBtn.style.display = "none";
         leaderboard.style.display = "block";
+
+        const percentages = [35, 20, 10, 5, 5, 5, 5, 5, 5, 5];
+
         try {
           const q = query(collection(db, "wyniki"), orderBy("reactionTime"), limit(10));
           const res = await getDocs(q);
           results.innerHTML = res.docs.map((doc, i) => {
             const d = doc.data();
-            return `<li>#${i + 1} ➜ ${d.wallet} — <strong>${d.reactionTime}ms</strong></li>`;
+            const share = percentages[i] || 0;
+            return `<li>#${i + 1} ➜ ${d.wallet} — <strong>${d.reactionTime}ms</strong> <span style="float:right; color:lime;">${share}% pool</span></li>`;
           }).join("");
         } catch (err) {
           results.innerHTML = "<li>Error loading results</li>";
@@ -167,8 +171,10 @@
     }
     #overlay {
       position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
       z-index: 500;
       display: none;
     }
@@ -185,6 +191,16 @@
       margin: 6px;
       padding: 8px;
       border-radius: 6px;
+    }
+    #poolInfo h2 {
+      font-size: 2em;
+      color: #00ffcc;
+      margin-bottom: 10px;
+    }
+    #poolAmount {
+      font-size: 1.5em;
+      color: gold;
+      font-weight: bold;
     }
     #adBannerMenu {
       margin: 20px auto;
@@ -209,7 +225,7 @@
   <div id="countdown"></div>
   <div id="message">Click when the screen turns green</div>
 
-  <!-- 📦 Reklama w menu -->
+  <!-- Reklama w menu -->
   <div id="adBannerMenu">
     <iframe data-aa="2402384"
       src="//ad.a-ads.com/2402384?size=300x250"
@@ -218,17 +234,21 @@
   </div>
 
   <div id="leaderboard">
+    <div id="poolInfo">
+      <h2>💰 Pool</h2>
+      <div id="poolAmount">x sats</div>
+    </div>
     <h2>🏅 Top 10 Results</h2>
     <ul id="results"><li>Loading...</li></ul>
     <button id="backBtn">⬅️ Back to game</button>
   </div>
 
   <div id="overlay">
-    <!-- 📦 Reklama podczas gry -->
+    <!-- Reklama podczas gry -->
     <div id="adBannerInside">
       <iframe data-aa="2402384"
         src="//ad.a-ads.com/2402384?size=300x250"
-        style="width:300px; height:250px; border:0px; padding:0; overflow:hidden; background-color: transparent;">
+        style="width:300px; height:250px; border:0px; padding:0; overflow:hidden; background...
       </iframe>
     </div>
   </div>
