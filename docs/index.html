@@ -5,7 +5,7 @@
   <title>CCRUST Speed Test</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Firebase SDK (ESM modules) -->
+  <!-- Firebase SDK -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-app.js";
     import { getFirestore, collection, addDoc, getDocs, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.12.1/firebase-firestore.js";
@@ -39,34 +39,26 @@
         const wallet = walletInput.value.trim();
         if (!wallet) return alert("Please enter your wallet address!");
 
-        // 🔥 Dodajemy reklamę przy starcie
-        const adScript = document.createElement("script");
-        adScript.src = "//pl27138088.profitableratecpm.com/41/5f/80/415f80c02c38a4643058266c2cb8c7b4.js";
-        document.body.appendChild(adScript);
+        startBtn.disabled = true;
+        walletInput.disabled = true;
+        leaderBtn.disabled = true;
+        countdown.textContent = "3";
 
-        // Kontynuuj grę po 5 sek.
-        setTimeout(() => {
-          startBtn.disabled = true;
-          walletInput.disabled = true;
-          leaderBtn.disabled = true;
-          countdown.textContent = "3";
-
-          let counter = 3;
-          const interval = setInterval(() => {
-            counter--;
-            countdown.textContent = counter > 0 ? counter : "";
-            if (counter === 0) {
-              clearInterval(interval);
-              startBtn.style.display = "none";
-              walletInput.style.display = "none";
-              countdown.style.display = "none";
-              title.style.display = "none";
-              leaderBtn.style.display = "none";
-              overlay.style.display = "block";
-              startGame(wallet);
-            }
-          }, 1000);
-        }, 5000); // ⏱️ czas na wyświetlenie reklamy
+        let counter = 3;
+        const interval = setInterval(() => {
+          counter--;
+          countdown.textContent = counter > 0 ? counter : "";
+          if (counter === 0) {
+            clearInterval(interval);
+            startBtn.style.display = "none";
+            walletInput.style.display = "none";
+            countdown.style.display = "none";
+            title.style.display = "none";
+            leaderBtn.style.display = "none";
+            overlay.style.display = "block";
+            startGame(wallet);
+          }
+        }, 1000);
       };
 
       function startGame(wallet) {
@@ -189,6 +181,14 @@
       padding: 8px;
       border-radius: 6px;
     }
+    #adBannerContainer {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 300px;
+      height: 250px;
+      z-index: 1000;
+    }
   </style>
 </head>
 <body>
@@ -206,5 +206,18 @@
   </div>
 
   <div id="overlay"></div>
+
+  <!-- 📦 Baner reklamowy Adsterra -->
+  <div id="adBannerContainer"></div>
+  <script type="text/javascript">
+    atOptions = {
+      'key' : 'ddcd93e7f9d554d3017b67f3f79cb8fd',
+      'format' : 'iframe',
+      'height' : 250,
+      'width' : 300,
+      'params' : {}
+    };
+  </script>
+  <script type="text/javascript" src="//www.highperformanceformat.com/ddcd93e7f9d554d3017b67f3f79cb8fd/invoke.js"></script>
 </body>
 </html>
