@@ -201,19 +201,53 @@
       color: gold;
       font-weight: bold;
     }
-    #adHighPerformance {
+    #adUnderPlay,
+    #adUnderLeaderboard,
+    #adOverlayInside {
       margin: 20px auto;
       width: 300px;
       height: 250px;
       z-index: 500;
     }
+    #adOverlayInside {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
   </style>
 </head>
 <body>
   <h1 id="title">CCRUST Speed Test</h1>
+  <input type="text" id="wallet" placeholder="Enter your Lightning address ⚡" />
+  <button id="startBtn">Play</button>
+  <button id="leaderBtn">🏆 Leaderboard</button>
+  <div id="countdown"></div>
+  <div id="message">Click when the screen turns green</div>
 
-  <!-- ⚡ Reklama HighPerformanceFormat -->
-  <div id="adHighPerformance"></div>
+  <!-- 🔵 Reklama pod Play -->
+  <div id="adUnderPlay"></div>
+
+  <div id="leaderboard">
+    <div id="poolInfo">
+      <h2>💰 Pool</h2>
+      <div id="poolAmount">x sats</div>
+    </div>
+    <h2>🏅 Top 10 Results</h2>
+    <ul id="results"><li>Loading...</li></ul>
+
+    <!-- 🔴 Reklama pod leaderboardem -->
+    <div id="adUnderLeaderboard"></div>
+
+    <button id="backBtn">⬅️ Back to game</button>
+  </div>
+
+  <div id="overlay">
+    <!-- 🟡 Reklama w overlayu gry -->
+    <div id="adOverlayInside"></div>
+  </div>
+
+  <!-- 🧠 Skrypt reklamowy -->
   <script type="text/javascript">
     atOptions = {
       'key' : 'ddcd93e7f9d554d3017b67f3f79cb8fd',
@@ -223,24 +257,7 @@
       'params' : {}
     };
   </script>
-  <script type="text/javascript" src="//www.highperformanceformat.com/ddcd93e7f9d554d3017b67f3f79cb8fd/invoke.js"></script>
-
-  <input type="text" id="wallet" placeholder="Enter your Lightning address ⚡" />
-  <button id="startBtn">Play</button>
-  <button id="leaderBtn">🏆 Leaderboard</button>
-  <div id="countdown"></div>
-  <div id="message">Click when the screen turns green</div>
-
-  <div id="leaderboard">
-    <div id="poolInfo">
-      <h2>💰 Pool</h2>
-      <div id="poolAmount">x sats</div>
-    </div>
-    <h2>🏅 Top 10 Results</h2>
-    <ul id="results"><li>Loading...</li></ul>
-    <button id="backBtn">⬅️ Back to game</button>
-  </div>
-
-  <div id="overlay"></div>
+  <script type="text/javascript" src="//www.highperformanceformat.com/ddcd93e7f9d554d301
+    <script type="text/javascript" src="//www.highperformanceformat.com/ddcd93e7f9d554d3017b67f3f79cb8fd/invoke.js"></script>
 </body>
 </html>
